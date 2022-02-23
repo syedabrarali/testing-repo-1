@@ -1,0 +1,35 @@
+name: Converted Workflow
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  Build:
+    runs-on: '${{ matrix.os }}'
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: >-
+          openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv
+          $encrypted_9f3b5599b056_iv -in service-account.json.enc -out
+          service-account.json -d
+      - run: 'curl https://sdk.cloud.google.com | bash > /dev/null;'
+      - run: source $HOME/google-cloud-sdk/path.bash.inc
+      - run: gcloud components update kubectl
+      - run: gcloud auth activate-service-account --key-file service-account.json
+      - run: gcloud config set project multi-k8s-341313
+      - run: gcloud config set compute/zone asia-east1-a
+      - run: gcloud container clusters get-credentials k8s-multi
+      - run: >-
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME"
+          --password-stdin
+      - run: >-
+          docker build -t syed9008572790/react-test -f ./client/Dockerfile.dev
+          ./client
+      - run: docker run -e CI=true syed9008572790/react-test npm test
