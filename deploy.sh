@@ -1,5 +1,5 @@
 docker build -t syed9008572790/multi-client-k8s:latest -t syed9008572790/multi-client-k8s:$SHA -f ./client/Dockerfile ./client
-docker build -t syed9008572790/multi-server-k8s-pgfix:latest -t syed9008572790/multi-server-k8s-pgfix:$SHA -f ./server/Dockerfile ./server
+
 docker build -t syed9008572790/multi-worker-k8s:latest -t syed9008572790/multi-worker-k8s:$SHA -f ./worker/Dockerfile ./worker
 
 docker push syed9008572790/multi-client-k8s:latest
